@@ -5,8 +5,10 @@ import com.github.zxbu.webdavteambition.store.AliYunDriverFileSystemStore;
 import net.sf.webdav.WebdavServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -26,7 +28,7 @@ public class WebdavTeambitionApplication {
         ServletRegistrationBean<WebdavServlet> servletRegistrationBean = new ServletRegistrationBean<>(new WebdavServlet(), "/*");
         Map<String, String> inits = new LinkedHashMap<>();
         inits.put("ResourceHandlerImplementation", AliYunDriverFileSystemStore.class.getName());
-//        inits.put("ResourceHandlerImplementation", LocalFileSystemStore.class.getName());
+        // inits.put("ResourceHandlerImplementation", LocalFileSystemStore.class.getName());
         inits.put("rootpath", "./");
         inits.put("storeDebug", "1");
         servletRegistrationBean.setInitParameters(inits);
@@ -41,6 +43,4 @@ public class WebdavTeambitionApplication {
         filterRegistrationBean.setEnabled(true);
         return filterRegistrationBean;
     }
-
-
 }

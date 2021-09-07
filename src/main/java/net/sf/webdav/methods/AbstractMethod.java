@@ -362,6 +362,7 @@ public abstract class AbstractMethod implements IMethodExecutor {
     /**
      * reads the depth header from the request and returns it as a int
      * 
+     * @param req
      * @return the depth from the depth header
      */
     protected int getDepth(HttpServletRequest req) {
