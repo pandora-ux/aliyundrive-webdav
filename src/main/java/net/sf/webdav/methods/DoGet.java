@@ -142,7 +142,17 @@ public class DoGet extends DoHead {
                     childrenTemp.append("\">");
                     childrenTemp.append("<td>");
                     childrenTemp.append("<a href=\"");
+
+                    if (req.getServletPath() != "/") {
+                        childrenTemp.append(req.getRequestURI());
+                    }
+
+                    if (!req.getRequestURI().endsWith("/")) {
+                        childrenTemp.append('/');
+                    }
+
                     childrenTemp.append(UriUtils.encode(child, "utf-8"));
+
                     StoredObject obj= _store.getStoredObject(transaction, path+"/"+child);
                     if (obj == null)
                     {
