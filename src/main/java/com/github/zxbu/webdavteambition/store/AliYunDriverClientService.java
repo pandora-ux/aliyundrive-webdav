@@ -34,6 +34,8 @@ public class AliYunDriverClientService {
     private static String rootPath = "/";
     private static int chunkSize = 10485760; // 10MB
     private TFile rootTFile = null;
+    // / 字符占位符
+    private static String filePathPlaceholder = "[@-@]";
 
     private static Cache<String, Set<TFile>> tFilesCache = Caffeine.newBuilder()
             .initialCapacity(128)
@@ -68,6 +70,9 @@ public class AliYunDriverClientService {
         tFileList.sort(Comparator.comparing(TFile::getUpdated_at).reversed());
         Set<TFile> tFileSets = new LinkedHashSet<>();
         for (TFile tFile : tFileList) {
+            if (tFile.getName() != null && tFile.getName().trim() != "" && tFile.getName().contains("/")) {
+                tFile.setName(tFile.getName().replace("/", filePathPlaceholder));
+            }
             if (!tFileSets.add(tFile)) {
                 LOGGER.info("当前目录下{} 存在同名文件：{}，文件大小：{}", nodeId, tFile.getName(), tFile.getSize());
             }
