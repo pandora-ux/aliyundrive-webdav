@@ -46,22 +46,22 @@ public class ResourceLocks implements IResourceLocks {
     /**
      * keys: path value: LockedObject from that path
      */
-    protected Hashtable<String, LockedObject> _locks = new Hashtable<String, LockedObject>();
+    protected Hashtable<String, LockedObject> _locks = new Hashtable<>();
 
     /**
      * keys: id value: LockedObject from that id
      */
-    protected Hashtable<String, LockedObject> _locksByID = new Hashtable<String, LockedObject>();
+    protected Hashtable<String, LockedObject> _locksByID = new Hashtable<>();
 
     /**
      * keys: path value: Temporary LockedObject from that path
      */
-    protected Hashtable<String, LockedObject> _tempLocks = new Hashtable<String, LockedObject>();
+    protected Hashtable<String, LockedObject> _tempLocks = new Hashtable<>();
 
     /**
      * keys: id value: Temporary LockedObject from that id
      */
-    protected Hashtable<String, LockedObject> _tempLocksByID = new Hashtable<String, LockedObject>();
+    protected Hashtable<String, LockedObject> _tempLocksByID = new Hashtable<>();
 
     // REMEMBER TO REMOVE UNUSED LOCKS FROM THE HASHTABLE AS WELL
 
@@ -94,7 +94,7 @@ public class ResourceLocks implements IResourceLocks {
 
             lo._exclusive = exclusive;
             lo._lockDepth = depth;
-            lo._expiresAt = System.currentTimeMillis() + (timeout * 1000);
+            lo._expiresAt = System.currentTimeMillis() + (timeout * 1000L);
             if (lo._parent != null) {
                 lo._parent._expiresAt = lo._expiresAt;
                 if (lo._parent.equals(_root)) {
@@ -211,11 +211,7 @@ public class ResourceLocks implements IResourceLocks {
     }
 
     public LockedObject getLockedObjectByID(ITransaction transaction, String id) {
-        if (_locksByID.containsKey(id)) {
-            return _locksByID.get(id);
-        } else {
-            return null;
-        }
+        return _locksByID.getOrDefault(id, null);
     }
 
     public LockedObject getLockedObjectByPath(ITransaction transaction,
@@ -229,11 +225,7 @@ public class ResourceLocks implements IResourceLocks {
 
     public LockedObject getTempLockedObjectByID(ITransaction transaction,
             String id) {
-        if (_tempLocksByID.containsKey(id)) {
-            return _tempLocksByID.get(id);
-        } else {
-            return null;
-        }
+        return _tempLocksByID.getOrDefault(id, null);
     }
 
     public LockedObject getTempLockedObjectByPath(ITransaction transaction,
@@ -249,7 +241,6 @@ public class ResourceLocks implements IResourceLocks {
      * generates real LockedObjects for the resource at path and its parent
      * folders. does not create new LockedObjects if they already exist
      * 
-     * @param transaction
      * @param path
      *      path to the (new) LockedObject
      * @return the LockedObject for path.
@@ -278,7 +269,6 @@ public class ResourceLocks implements IResourceLocks {
      * generates temporary LockedObjects for the resource at path and its parent
      * folders. does not create new LockedObjects if they already exist
      * 
-     * @param transaction
      * @param path
      *      path to the (new) LockedObject
      * @return the LockedObject for path.
@@ -306,7 +296,6 @@ public class ResourceLocks implements IResourceLocks {
      * deletes unused LockedObjects and resets the counter. works recursively
      * starting at the given LockedObject
      * 
-     * @param transaction
      * @param lo
      *      LockedObject
      * @param temporary

@@ -151,7 +151,7 @@ public class LocalFileSystemStore implements IWebdavStore {
         String[] childrenNames = null;
         if (file.isDirectory()) {
             File[] children = file.listFiles();
-            List<String> childList = new ArrayList<String>();
+            List<String> childList = new ArrayList<>();
             String name = null;
             for (int i = 0; i < children.length; i++) {
                 name = children[i].getName();

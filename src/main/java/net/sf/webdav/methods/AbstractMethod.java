@@ -47,9 +47,9 @@ import net.sf.webdav.locking.LockedObject;
 
 public abstract class AbstractMethod implements IMethodExecutor {
 
-    private static final ThreadLocal<DateFormat> thLastmodifiedDateFormat = new ThreadLocal<DateFormat>();
-    private static final ThreadLocal<DateFormat> thCreationDateFormat = new ThreadLocal<DateFormat>();
-    private static final ThreadLocal<DateFormat> thLocalDateFormat = new ThreadLocal<DateFormat>();
+    private static final ThreadLocal<DateFormat> thLastmodifiedDateFormat = new ThreadLocal<>();
+    private static final ThreadLocal<DateFormat> thCreationDateFormat = new ThreadLocal<>();
+    private static final ThreadLocal<DateFormat> thLocalDateFormat = new ThreadLocal<>();
     
     /**
      * Array containing the safe characters set.
@@ -362,7 +362,6 @@ public abstract class AbstractMethod implements IMethodExecutor {
     /**
      * reads the depth header from the request and returns it as a int
      * 
-     * @param req
      * @return the depth from the depth header
      */
     protected int getDepth(HttpServletRequest req) {
@@ -403,8 +402,8 @@ public abstract class AbstractMethod implements IMethodExecutor {
         String lastModified = "";
 
         if (so != null && so.isResource()) {
-            resourceLength = new Long(so.getResourceLength()).toString();
-            lastModified = new Long(so.getLastModified().getTime()).toString();
+            resourceLength = Long.toString(so.getResourceLength());
+            lastModified = Long.toString(so.getLastModified().getTime());
         }
 
         return "W/\"" + resourceLength + "-" + lastModified + "\"";
@@ -466,15 +465,12 @@ public abstract class AbstractMethod implements IMethodExecutor {
      *      Servlet request
      * @param resp
      *      Servlet response
-     * @param resourceLocks
      * @param path
      *      path to the resource
      * @param errorList
      *      List of error to be displayed
      * @return true if no lock on a resource with the given path exists or if
      *  the If-Header corresponds to the locked resource
-     * @throws IOException
-     * @throws LockFailedException
      */
     protected boolean checkLocks(ITransaction transaction,
             HttpServletRequest req, HttpServletResponse resp,
@@ -545,7 +541,7 @@ public abstract class AbstractMethod implements IMethodExecutor {
             String absoluteUri = req.getRequestURI();
             // String relativePath = getRelativePath(req);
 
-            HashMap<String, String> namespaces = new HashMap<String, String>();
+            HashMap<String, String> namespaces = new HashMap<>();
             namespaces.put("DAV:", "D");
 
             XMLWriter generatedXML = new XMLWriter(namespaces);

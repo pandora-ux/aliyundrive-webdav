@@ -19,7 +19,6 @@ package net.sf.webdav.fromcatalina;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.Cookie;
 
@@ -224,7 +223,7 @@ public final class RequestUtil {
         if ((header == null) || (header.length() < 1))
             return (new Cookie[0]);
 
-        ArrayList<Cookie> cookies = new ArrayList<Cookie>();
+        ArrayList<Cookie> cookies = new ArrayList<>();
         while (header.length() > 0) {
             int semicolon = header.indexOf(';');
             if (semicolon < 0)

@@ -1,7 +1,6 @@
 package com.github.zxbu.webdavteambition.model.result;
 
 import java.util.Date;
-import java.util.Objects;
 
 public class TFile {
     private Date created_at;

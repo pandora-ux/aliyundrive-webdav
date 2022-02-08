@@ -7,11 +7,9 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -28,43 +26,37 @@ public class AliYunDriverClient {
 
     public AliYunDriverClient(AliYunDriveProperties aliYunDriveProperties) {
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                request = request.newBuilder()
-                        .removeHeader("User-Agent")
-                        .addHeader("User-Agent", aliYunDriveProperties.getAgent())
-                        .removeHeader("authorization")
-                        .addHeader("authorization", aliYunDriveProperties.getAuthorization())
-                        .build();
-                return chain.proceed(request);
-            }
-        }).authenticator(new Authenticator() {
-            @Override
-            public Request authenticate(Route route, Response response) throws IOException {
-                if (response.code() == 401 && response.body() != null  && response.body().string().contains("AccessToken")) {
-                    String refreshTokenResult;
-                    try {
-                        refreshTokenResult = post("https://websv.aliyundrive.com/token/refresh", Collections.singletonMap("refresh_token", readRefreshToken()));
-                    } catch (Exception e) {
-                        // 如果置换token失败，先清空原token文件，再尝试一次
-                        deleteRefreshTokenFile();
-                        refreshTokenResult = post("https://websv.aliyundrive.com/token/refresh", Collections.singletonMap("refresh_token", readRefreshToken()));
-                    }
-                    String accessToken = (String) JsonUtil.getJsonNodeValue(refreshTokenResult, "access_token");
-                    String refreshToken = (String) JsonUtil.getJsonNodeValue(refreshTokenResult, "refresh_token");
-                    Assert.hasLength(accessToken, "获取accessToken失败");
-                    Assert.hasLength(refreshToken, "获取refreshToken失败");
-                    aliYunDriveProperties.setAuthorization(accessToken);
-                    writeRefreshToken(refreshToken);
-                    return response.request().newBuilder()
-                            .removeHeader("authorization")
-                            .header("authorization", accessToken)
-                            .build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(chain -> {
+            Request request = chain.request();
+            request = request.newBuilder()
+                    .removeHeader("User-Agent")
+                    .addHeader("User-Agent", aliYunDriveProperties.getAgent())
+                    .removeHeader("authorization")
+                    .addHeader("authorization", aliYunDriveProperties.getAuthorization())
+                    .build();
+            return chain.proceed(request);
+        }).authenticator((route, response) -> {
+            if (response.code() == 401 && response.body() != null  && response.body().string().contains("AccessToken")) {
+                String refreshTokenResult;
+                try {
+                    refreshTokenResult = post("https://websv.aliyundrive.com/token/refresh", Collections.singletonMap("refresh_token", readRefreshToken()));
+                } catch (Exception e) {
+                    // 如果置换token失败，先清空原token文件，再尝试一次
+                    deleteRefreshTokenFile();
+                    refreshTokenResult = post("https://websv.aliyundrive.com/token/refresh", Collections.singletonMap("refresh_token", readRefreshToken()));
                 }
-                return null;
+                String accessToken = (String) JsonUtil.getJsonNodeValue(refreshTokenResult, "access_token");
+                String refreshToken = (String) JsonUtil.getJsonNodeValue(refreshTokenResult, "refresh_token");
+                Assert.hasLength(accessToken, "获取accessToken失败");
+                Assert.hasLength(refreshToken, "获取refreshToken失败");
+                aliYunDriveProperties.setAuthorization(accessToken);
+                writeRefreshToken(refreshToken);
+                return response.request().newBuilder()
+                        .removeHeader("authorization")
+                        .header("authorization", accessToken)
+                        .build();
             }
+            return null;
         })
                 .readTimeout(1, TimeUnit.MINUTES)
                 .writeTimeout(1, TimeUnit.MINUTES)

@@ -61,7 +61,7 @@ public class DoPut extends AbstractMethod {
 
             _userAgent = req.getHeader("User-Agent");
 
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+            Hashtable<String, Integer> errorList = new Hashtable<>();
 
             if (!checkLocks(transaction, req, resp, _resourceLocks, parentPath)) {
                 resp.setStatus(WebdavStatus.SC_LOCKED);
@@ -174,7 +174,6 @@ public class DoPut extends AbstractMethod {
     }
 
     /**
-     * @param resp
      */
     private void doUserAgentWorkaround(HttpServletResponse resp) {
         if (_userAgent != null && _userAgent.indexOf("WebDAVFS") != -1

@@ -13,5 +13,5 @@ services:
     tty: true
     environment:
       - TZ=Asia/Shanghai
-      - ALIYUNDRIVE_REFRESH_TOKEN=<change me>
-      - ALIYUNDRIVE_AUTH_PASSWORD=<change me>
+      - ALIYUNDRIVE_REFRESH_TOKEN=${REFRESH_TOKEN}
+      - ALIYUNDRIVE_AUTH_PASSWORD=${AUTH_PASSWORD}

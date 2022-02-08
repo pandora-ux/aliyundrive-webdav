@@ -80,7 +80,7 @@ public class DoLock extends AbstractMethod {
             _path = getRelativePath(req);
             _parentPath = getParentPath(getCleanPath(_path));
 
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+            Hashtable<String, Integer> errorList = new Hashtable<>();
 
             if (!checkLocks(transaction, req, resp, _resourceLocks, _path)) {
                 resp.setStatus(WebdavStatus.SC_LOCKED);
@@ -99,8 +99,7 @@ public class DoLock extends AbstractMethod {
             if (_userAgent != null && _userAgent.indexOf("Darwin") != -1) {
                 _macLockRequest = true;
 
-                String timeString = new Long(System.currentTimeMillis())
-                        .toString();
+                String timeString = Long.toString(System.currentTimeMillis());
                 _lockOwner = _userAgent.concat(timeString);
             }
 
@@ -466,14 +465,13 @@ public class DoLock extends AbstractMethod {
                 lockDurationStr = lockDurationStr.substring(0, commaPos);
             }
             if (lockDurationStr.startsWith("Second-")) {
-                lockDuration = new Integer(lockDurationStr.substring(7))
-                        .intValue();
+                lockDuration = Integer.parseInt(lockDurationStr.substring(7));
             } else {
                 if (lockDurationStr.equalsIgnoreCase("infinity")) {
                     lockDuration = MAX_TIMEOUT;
                 } else {
                     try {
-                        lockDuration = new Integer(lockDurationStr).intValue();
+                        lockDuration = Integer.parseInt(lockDurationStr);
                     } catch (NumberFormatException e) {
                         lockDuration = MAX_TIMEOUT;
                     }
@@ -495,7 +493,7 @@ public class DoLock extends AbstractMethod {
     private void generateXMLReport(ITransaction transaction,
             HttpServletResponse resp, LockedObject lo) throws IOException {
 
-        HashMap<String, String> namespaces = new HashMap<String, String>();
+        HashMap<String, String> namespaces = new HashMap<>();
         namespaces.put("DAV:", "D");
 
         resp.setStatus(WebdavStatus.SC_OK);
@@ -593,7 +591,7 @@ public class DoLock extends AbstractMethod {
     private void sendLockFailError(ITransaction transaction,
             HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
-        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> errorList = new Hashtable<>();
         errorList.put(_path, WebdavStatus.SC_LOCKED);
         sendReport(req, resp, errorList);
     }

@@ -20,7 +20,7 @@ public class WebdavStatus {
      * This Hashtable contains the mapping of HTTP and WebDAV status codes to
      * descriptive text. This is a static variable.
      */
-    private static Hashtable<Integer, String> _mapStatusCodes = new Hashtable<Integer, String>();
+    private static Hashtable<Integer, String> _mapStatusCodes = new Hashtable<>();
 
     // ------------------------------------------------------ HTTP Status Codes
 

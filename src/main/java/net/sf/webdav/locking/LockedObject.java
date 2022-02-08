@@ -318,11 +318,10 @@ public class LockedObject {
 
     /**
      * Sets a new timeout for the LockedObject
-     * 
-     * @param timeout
+     *
      */
     public void refreshTimeout(int timeout) {
-        _expiresAt = System.currentTimeMillis() + (timeout * 1000);
+        _expiresAt = System.currentTimeMillis() + (timeout * 1000L);
     }
 
     /**
@@ -376,8 +375,7 @@ public class LockedObject {
 
     /**
      * Sets the exclusivity for the LockedObject
-     * 
-     * @param exclusive
+     *
      */
     public void setExclusive(boolean exclusive) {
         _exclusive = exclusive;

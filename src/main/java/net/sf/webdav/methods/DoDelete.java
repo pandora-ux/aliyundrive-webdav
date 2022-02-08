@@ -56,7 +56,7 @@ public class DoDelete extends AbstractMethod {
             String path = getRelativePath(req);
             String parentPath = getParentPath(getCleanPath(path));
 
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+            Hashtable<String, Integer> errorList = new Hashtable<>();
 
             if (!checkLocks(transaction, req, resp, _resourceLocks, parentPath)) {
                 resp.setStatus(WebdavStatus.SC_LOCKED);
@@ -73,7 +73,7 @@ public class DoDelete extends AbstractMethod {
             if (_resourceLocks.lock(transaction, path, tempLockOwner, false, 0,
                     TEMP_TIMEOUT, TEMPORARY)) {
                 try {
-                    errorList = new Hashtable<String, Integer>();
+                    errorList = new Hashtable<>();
                     deleteResource(transaction, path, errorList, req, resp);
                     if (!errorList.isEmpty()) {
                         sendReport(req, resp, errorList);

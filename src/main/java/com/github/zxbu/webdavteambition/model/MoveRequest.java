@@ -1,7 +1,5 @@
 package com.github.zxbu.webdavteambition.model;
 
-import java.util.List;
-
 public class MoveRequest {
     private String drive_id;
     private String file_id;

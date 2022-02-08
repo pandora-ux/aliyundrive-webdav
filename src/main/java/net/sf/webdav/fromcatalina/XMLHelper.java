@@ -24,7 +24,7 @@ public class XMLHelper {
 
     public static Vector<String> getPropertiesFromXML(Node propNode) {
         Vector<String> properties;
-        properties = new Vector<String>();
+        properties = new Vector<>();
         NodeList childList = propNode.getChildNodes();
 
         for (int i = 0; i < childList.getLength(); i++) {

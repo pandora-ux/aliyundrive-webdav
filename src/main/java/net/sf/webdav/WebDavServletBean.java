@@ -35,7 +35,7 @@ public class WebDavServletBean extends HttpServlet {
     private static final boolean READ_ONLY = false;
 	protected ResourceLocks _resLocks;
 	protected IWebdavStore _store;
-    private HashMap<String, IMethodExecutor> _methodMap = new HashMap<String, IMethodExecutor>();
+    private HashMap<String, IMethodExecutor> _methodMap = new HashMap<>();
 
     public WebDavServletBean() {
         _resLocks = new ResourceLocks();
@@ -53,14 +53,12 @@ public class WebDavServletBean extends HttpServlet {
 
         _store = store;
 
-        IMimeTyper mimeTyper = new IMimeTyper() {
-            public String getMimeType(ITransaction transaction, String path) {
-                String retVal= _store.getStoredObject(transaction, path).getMimeType();
-                if ( retVal== null) {
-                    retVal= getServletContext().getMimeType( path);
-                }
-                return retVal;
+        IMimeTyper mimeTyper = (transaction, path) -> {
+            String retVal= _store.getStoredObject(transaction, path).getMimeType();
+            if ( retVal== null) {
+                retVal= getServletContext().getMimeType( path);
             }
+            return retVal;
         };
 
         register("GET", new DoGet(store, dftIndexFile, insteadOf404, _resLocks,
@@ -177,8 +175,6 @@ public class WebDavServletBean extends HttpServlet {
     /**
      * Method that permit to customize the way
      * user information are extracted from the request, default use JAAS
-     * @param req
-     * @return
      */
     protected Principal getUserPrincipal(HttpServletRequest req) {
         return req.getUserPrincipal();

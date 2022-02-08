@@ -211,7 +211,6 @@ public class DoGet extends DoHead {
      * Return the CSS styles used to display the HTML representation
      * of the webdav content.
      *
-     * @return
      */
     protected String getCSS()
     {
@@ -273,11 +272,6 @@ public class DoGet extends DoHead {
     /**
      * Return the header to be displayed in front of the folder content
      *
-     * @param transaction
-     * @param path
-     * @param resp
-     * @param req
-     * @return
      */
     protected String getHeader(ITransaction transaction, String path,
             HttpServletResponse resp, HttpServletRequest req)
@@ -288,11 +282,6 @@ public class DoGet extends DoHead {
     /**
      * Return the footer to be displayed after the folder content
      *
-     * @param transaction
-     * @param path
-     * @param resp
-     * @param req
-     * @return
      */
     protected String getFooter(ITransaction transaction, String path,
             HttpServletResponse resp, HttpServletRequest req)
@@ -303,7 +292,6 @@ public class DoGet extends DoHead {
     /**
      * Return this as the Date/Time format for displaying Creation + Modification dates
      *
-     * @param browserLocale
      * @return DateFormat used to display creation and modification dates
      */
     protected DateFormat getDateTimeFormat(Locale browserLocale)

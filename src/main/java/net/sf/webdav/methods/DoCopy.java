@@ -30,7 +30,6 @@ import net.sf.webdav.exceptions.LockFailedException;
 import net.sf.webdav.exceptions.ObjectAlreadyExistsException;
 import net.sf.webdav.exceptions.ObjectNotFoundException;
 import net.sf.webdav.exceptions.WebdavException;
-import net.sf.webdav.fromcatalina.RequestUtil;
 import net.sf.webdav.locking.ResourceLocks;
 
 public class DoCopy extends AbstractMethod {
@@ -104,7 +103,6 @@ public class DoCopy extends AbstractMethod {
      *      if an error in the underlying store occurs
      * @throws IOException
      *      when an error occurs while sending the response
-     * @throws LockFailedException
      */
     public boolean copyResource(ITransaction transaction,
             HttpServletRequest req, HttpServletResponse resp)
@@ -123,7 +121,7 @@ public class DoCopy extends AbstractMethod {
             return false;
         }
 
-        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> errorList = new Hashtable<>();
         String parentDestinationPath = getParentPath(getCleanPath(destinationPath));
 
         if (!checkLocks(transaction, req, resp, _resourceLocks,
@@ -169,7 +167,7 @@ public class DoCopy extends AbstractMethod {
                     return false;
                 }
 
-                errorList = new Hashtable<String, Integer>();
+                errorList = new Hashtable<>();
 
                 destinationSo = _store.getStoredObject(transaction,
                         destinationPath);
@@ -232,7 +230,6 @@ public class DoCopy extends AbstractMethod {
      *      HttpServletResponse
      * @throws WebdavException
      *      if an error in the underlying store occurs
-     * @throws IOException
      */
     private void copy(ITransaction transaction, String sourcePath,
             String destinationPath, Hashtable<String, Integer> errorList,

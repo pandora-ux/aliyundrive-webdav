@@ -56,7 +56,6 @@ public interface IWebdavStore {
      *      the principal that started this request or <code>null</code> if
      *      there is non available
      *
-     * @throws WebdavException
      */
     ITransaction begin(Principal principal, HttpServletRequest req, HttpServletResponse resp);
 

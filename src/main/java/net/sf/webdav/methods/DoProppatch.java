@@ -57,7 +57,7 @@ public class DoProppatch extends AbstractMethod {
         String path = getRelativePath(req);
         String parentPath = getParentPath(getCleanPath(path));
 
-        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> errorList = new Hashtable<>();
 
         if (!checkLocks(transaction, req, resp, _resourceLocks, parentPath)) {
             resp.setStatus(WebdavStatus.SC_LOCKED);
@@ -104,7 +104,7 @@ public class DoProppatch extends AbstractMethod {
                 boolean lockTokenMatchesIfHeader = (lockTokens != null && lockTokens[0].equals(lo.getID()));
                 if (lo != null && lo.isExclusive() && !lockTokenMatchesIfHeader) {
                     // Object on specified path is LOCKED
-                    errorList = new Hashtable<String, Integer>();
+                    errorList = new Hashtable<>();
                     errorList.put(path, new Integer(WebdavStatus.SC_LOCKED));
                     sendReport(req, resp, errorList);
                     return;
@@ -112,7 +112,7 @@ public class DoProppatch extends AbstractMethod {
 
                 List<String> toset = null;
                 List<String> toremove = null;
-                List<String> tochange = new Vector<String>();
+                List<String> tochange = new Vector<>();
                 // contains all properties from
                 // toset and toremove
 
@@ -143,7 +143,7 @@ public class DoProppatch extends AbstractMethod {
                     return;
                 }
 
-                HashMap<String, String> namespaces = new HashMap<String, String>();
+                HashMap<String, String> namespaces = new HashMap<>();
                 namespaces.put("DAV:", "D");
 
                 if (tosetNode != null) {
