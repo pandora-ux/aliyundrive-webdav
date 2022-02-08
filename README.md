@@ -165,6 +165,7 @@ javascript:var p=document.createElement('p');p.style='text-align:center;margin-t
 8. 支持WebDav权限校验（默认账户密码：admin/admin）
 9. 文件下载断点续传
 10. Webdav下的流媒体播放等功能
+11. 支持文件名包含 `/` 字符
 ## 暂不支持的功能
 1. 移动文件到其他目录的同时，修改文件名。比如 /a.zip 移动到 /b/a1.zip，是不支持的
 2. 文件上传断点续传
@@ -172,7 +173,6 @@ javascript:var p=document.createElement('p');p.style='text-align:center;margin-t
 ## 已知问题
 1. 没有做文件sha1校验，不保证上传文件的100%准确性（一般场景下，是没问题的）
 2. 通过文件名和文件大小判断是否重复。也就是说如果一个文件即使发生了更新，但其大小没有任何改变，是不会自动上传的
-3. 不支持文件名包含 `/` 字符  
 
 ## TODO
 1. 支持更多登录方式（验证码、账号密码等）
