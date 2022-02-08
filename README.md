@@ -70,7 +70,16 @@ services:
 # 端口6666可自行按需更改，此端口为WebDAV连接端口,8080为容器内配置端口，修改请量力而为。
 # 建议不要保留这些中文注释，以防报错，比如QNAP。
 ```
-
+## Kubernetes
+参考根目录内中的[k8s_app.yaml](k8s_app.yaml)，需要文件中修改container的环境变量值。  
+use this to deploy in truenas scale
+```shell
+sudo k3s kubectl apply -f k8s_app.yaml
+```
+or other k8s cluster
+```shell
+sudo kubectl apply -f k8s_app.yaml
+```
 # 参数说明
 ```bash
 --aliyundrive.refresh-token
