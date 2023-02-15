@@ -2,29 +2,44 @@ package com.github.zxbu.webdavteambition.store;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.zxbu.webdavteambition.client.AliYunDriverClient;
+import com.github.zxbu.webdavteambition.config.AliYunDriveProperties;
 import com.github.zxbu.webdavteambition.model.*;
 import com.github.zxbu.webdavteambition.model.result.TFile;
 import com.github.zxbu.webdavteambition.model.result.TFileListResult;
 import com.github.zxbu.webdavteambition.model.result.UploadPreResult;
 import com.github.zxbu.webdavteambition.util.JsonUtil;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import net.sf.webdav.exceptions.WebdavException;
+
 import okhttp3.HttpUrl;
 import okhttp3.Response;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.jsf.FacesContextUtils;
+
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class AliYunDriverClientService {
@@ -36,13 +51,21 @@ public class AliYunDriverClientService {
     // / 字符占位符
     private static String filePathPlaceholder = "[@-@]";
 
-    private static Cache<String, Set<TFile>> tFilesCache = Caffeine.newBuilder()
+    private static LoadingCache<String, Set<TFile>> tFilesCache = CacheBuilder.newBuilder()
             .initialCapacity(128)
             .maximumSize(1024)
             .expireAfterWrite(1, TimeUnit.MINUTES)
-            .build();
+            .build(new CacheLoader<String, Set<TFile>>() {
+                @Override
+                public Set<TFile> load(String key) throws Exception {
+                    // 获取真实的文件列表
+                    WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+                    AliYunDriverClientService service = (AliYunDriverClientService)context.getBean("AliYunDriverClientService");
+                    return service.getTFiles2(key);
+                }
+            });
 
-    private final AliYunDriverClient client;
+    public final AliYunDriverClient client;
 
     @Autowired
     private VirtualTFileService virtualTFileService;
@@ -52,19 +75,20 @@ public class AliYunDriverClientService {
         AliYunDriverFileSystemStore.setBean(this);
     }
 
-    public Set<TFile> getTFiles(String nodeId) {
-        Set<TFile> tFiles = tFilesCache.get(nodeId, key -> {
-            // 获取真实的文件列表
-            return getTFiles2(nodeId);
-        });
-        Set<TFile> all = new LinkedHashSet<>(tFiles);
-        // 获取上传中的文件列表
-        Collection<TFile> virtualTFiles = virtualTFileService.list(nodeId);
-        all.addAll(virtualTFiles);
-        return all;
+    public Set<TFile> getTFiles(final String nodeId) {
+        try {
+            Set<TFile> tFiles = tFilesCache.get(nodeId);
+            Set<TFile> all = new LinkedHashSet<>(tFiles);
+            // 获取上传中的文件列表
+            Collection<TFile> virtualTFiles = virtualTFileService.list(nodeId);
+            all.addAll(virtualTFiles);
+            return all;
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private Set<TFile> getTFiles2(String nodeId) {
+    public Set<TFile> getTFiles2(String nodeId) {
         List<TFile> tFileList = fileListFromApi(nodeId, null, new ArrayList<>());
         tFileList.sort(Comparator.comparing(TFile::getUpdated_at).reversed());
         Set<TFile> tFileSets = new LinkedHashSet<>();
@@ -83,7 +107,7 @@ public class AliYunDriverClientService {
     private List<TFile> fileListFromApi(String nodeId, String marker, List<TFile> all) {
         FileListRequest listQuery = new FileListRequest();
         listQuery.setMarker(marker);
-        listQuery.setLimit(100);
+        listQuery.setLimit(200);
         listQuery.setOrder_by("updated_at");
         listQuery.setOrder_direction("DESC");
         listQuery.setDrive_id(client.getDriveId());
@@ -92,12 +116,11 @@ public class AliYunDriverClientService {
         TFileListResult<TFile> tFileListResult = JsonUtil.readValue(json, new TypeReference<TFileListResult<TFile>>() {
         });
         all.addAll(tFileListResult.getItems());
-        if (!StringUtils.hasLength(tFileListResult.getNext_marker())) {
+        if (StringUtils.isEmpty(tFileListResult.getNext_marker())) {
             return all;
         }
         return fileListFromApi(nodeId, tFileListResult.getNext_marker(), all);
     }
-
 
     private Map<String, String> toMap(Object o) {
         try {
@@ -105,11 +128,14 @@ public class AliYunDriverClientService {
             Map<String, Object> rawMap = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
             });
             Map<String, String> stringMap = new LinkedHashMap<>();
-            rawMap.forEach((s, o1) -> {
-                if (o1 != null) {
-                    stringMap.put(s, o1.toString());
+            for (Map.Entry<String, Object> entry : rawMap.entrySet()) {
+                String s = entry.getKey();
+                Object o1 = entry.getValue();
+                if (o1 == null) {
+                    continue;
                 }
-            });
+                stringMap.put(s, o1.toString());
+            }
             return stringMap;
         } catch (Exception e) {
             throw new WebdavException(e);
@@ -177,7 +203,17 @@ public class AliYunDriverClientService {
                     UploadPreResult refreshResult = JsonUtil.readValue(refreshJson, UploadPreResult.class);
                     for (int j = i; j < partInfoList.size(); j++) {
                         UploadPreRequest.PartInfo oldInfo = partInfoList.get(j);
-                        UploadPreRequest.PartInfo newInfo = refreshResult.getPart_info_list().stream().filter(p -> p.getPart_number().equals(oldInfo.getPart_number())).findAny().orElseThrow(NullPointerException::new);
+                        UploadPreRequest.PartInfo newInfo = null;
+                        List<UploadPreRequest.PartInfo> list = refreshResult.getPart_info_list();
+                        for (UploadPreRequest.PartInfo p : list) {
+                            if (p.getPart_number().equals(oldInfo.getPart_number())) {
+                                newInfo = p;
+                                break;
+                            }
+                        }
+                        if (newInfo == null) {
+                            throw new NullPointerException("newInfo is null");
+                        }
                         oldInfo.setUpload_url(newInfo.getUpload_url());
                     }
                 }
@@ -297,7 +333,7 @@ public class AliYunDriverClientService {
     }
 
     private TFile getNodeIdByPath2(String path) {
-        if (!StringUtils.hasLength(path)) {
+        if (StringUtils.isEmpty(path)) {
             path = rootPath;
         }
         if (path.equals(rootPath)) {
@@ -347,14 +383,13 @@ public class AliYunDriverClientService {
         return rootTFile;
     }
 
-    private TFile getNodeIdByParentId(String parentId, String name) {
+    public TFile getNodeIdByParentId(String parentId, String name) {
         Set<TFile> tFiles = getTFiles(parentId);
         for (TFile tFile : tFiles) {
             if (tFile.getName().equals(name)) {
                 return tFile;
             }
         }
-
         return null;
     }
 

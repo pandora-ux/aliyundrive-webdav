@@ -36,15 +36,15 @@ public class AuthTomcatConfig implements WebServerFactoryCustomizer<Configurable
             RealmBase realm = new RealmBase() {
                 @Override
                 protected String getPassword(String username) {
-                    if (aliYunDriveProperties.getAuth().getUserName().equals(username)) {
-                        return aliYunDriveProperties.getAuth().getPassword();
+                    if (aliYunDriveProperties.auth.userName.equals(username)) {
+                        return aliYunDriveProperties.auth.password;
                     }
                     return null;
                 }
 
                 @Override
                 protected Principal getPrincipal(String username) {
-                    return new GenericPrincipal(username, aliYunDriveProperties.getAuth().getPassword(), Collections.singletonList("**"));
+                    return new GenericPrincipal(username, aliYunDriveProperties.auth.password, Collections.singletonList("**"));
                 }
             };
 

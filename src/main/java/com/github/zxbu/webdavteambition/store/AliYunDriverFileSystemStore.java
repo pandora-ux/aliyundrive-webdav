@@ -34,13 +34,9 @@ public class AliYunDriverFileSystemStore implements IWebdavStore {
         AliYunDriverFileSystemStore.aliYunDriverClientService = aliYunDriverClientService;
     }
 
-
-
-
     @Override
     public void destroy() {
         LOGGER.info("destroy");
-
     }
 
     @Override
