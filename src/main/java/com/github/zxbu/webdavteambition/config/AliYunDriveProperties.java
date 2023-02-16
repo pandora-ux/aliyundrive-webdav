@@ -27,7 +27,6 @@ public class AliYunDriveProperties implements InitializingBean {
     public String url = "https://api.aliyundrive.com/v2";
     public String authorization = "";
     public String refreshToken;
-    @Value("${aliyundrive.refreshToken}")
     public String refreshTokenNext;
     public String workDir = "/etc/aliyun-driver/";
     public String agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36";
@@ -68,13 +67,13 @@ public class AliYunDriveProperties implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String refreshTokenNext = this.refreshTokenNext;
+        String refreshToken = this.refreshToken;
         AliYunDriveProperties other = load(workDir);
         BeanUtils.copyProperties(other, this);
         if (StringUtils.isEmpty(this.deviceId)) {
             this.deviceId = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
         }
-        this.refreshTokenNext = refreshTokenNext;
+        this.refreshTokenNext = refreshToken;
         if (StringUtils.isEmpty(this.auth.userName)) {
             this.auth.userName = "admin";
         }
