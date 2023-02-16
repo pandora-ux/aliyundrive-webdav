@@ -1,7 +1,7 @@
 FROM maven:3.6.3-jdk-11 AS maven
 USER root
 COPY ./ /tmp/code
-RUN cd /tmp/code && mvn clean package -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+RUN cd /tmp/code && mvn clean package -DskipTests
 
 
 FROM openjdk:11-jdk-oracle
