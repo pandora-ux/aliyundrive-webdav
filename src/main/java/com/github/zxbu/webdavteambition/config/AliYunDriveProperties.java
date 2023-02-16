@@ -1,5 +1,9 @@
 package com.github.zxbu.webdavteambition.config;
 
+import lombok.Data;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import com.github.zxbu.webdavteambition.util.JsonUtil;
@@ -12,15 +16,18 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
+@Data
 @ConfigurationProperties(prefix = "aliyundrive", ignoreUnknownFields = true)
-public class AliYunDriveProperties {
+public class AliYunDriveProperties implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(AliYunDriveProperties.class);
     private static final String META_FILE_NAME = "meta.json";
 
     public String url = "https://api.aliyundrive.com/v2";
     public String authorization = "";
     public String refreshToken;
+    @Value("${aliyundrive.refreshToken}")
     public String refreshTokenNext;
     public String workDir = "/etc/aliyun-driver/";
     public String agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36";
@@ -30,7 +37,7 @@ public class AliYunDriveProperties {
     public String appId = "5dde4e1bdf9e4966b387ba58f4b3fdc3";
     public Session session = new Session();
 
-    public Auth auth;
+    public Auth auth = new Auth();
 
     public void save() {
         String json = JsonUtil.toJson(this);
@@ -59,6 +66,25 @@ public class AliYunDriveProperties {
         return new AliYunDriveProperties();
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String refreshTokenNext = this.refreshTokenNext;
+        AliYunDriveProperties other = load(workDir);
+        BeanUtils.copyProperties(other, this);
+        if (StringUtils.isEmpty(this.deviceId)) {
+            this.deviceId = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
+        }
+        this.refreshTokenNext = refreshTokenNext;
+        if (StringUtils.isEmpty(this.auth.userName)) {
+            this.auth.userName = "admin";
+        }
+        if (StringUtils.isEmpty(this.auth.password)) {
+            this.auth.password = "admin";
+        }
+        save();
+    }
+
+    @Data
     public class Session {
         public String privateKey;
         public String publicKey;
@@ -75,6 +101,7 @@ public class AliYunDriveProperties {
         }
     }
 
+    @Data
     public static class Auth {
         public Boolean enable = true;
         public String userName;

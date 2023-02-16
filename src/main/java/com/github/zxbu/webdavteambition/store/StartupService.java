@@ -21,13 +21,11 @@ public class StartupService {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEvent() {
-        System.out.println("hello world, I have just started up");
         startAliYunSessionManager();
     }
 
     @EventListener(ContextClosedEvent.class)
     public void onContextClosedEvent(ContextClosedEvent contextClosedEvent) {
-        System.out.println("ContextClosedEvent occurred at millis: " + contextClosedEvent.getTimestamp());
         stopAliYunSessionManager();
     }
 

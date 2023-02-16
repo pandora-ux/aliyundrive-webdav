@@ -15,9 +15,7 @@
  */
 package net.sf.webdav.methods;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,7 +31,7 @@ import net.sf.webdav.IWebdavStore;
 import net.sf.webdav.StoredObject;
 import net.sf.webdav.WebdavStatus;
 import net.sf.webdav.locking.ResourceLocks;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.util.UriUtils;
 
 public class DoGet extends DoHead {
@@ -49,8 +47,9 @@ public class DoGet extends DoHead {
 
     }
 
+
     protected void doBody(ITransaction transaction, HttpServletResponse resp,
-            String path) {
+                          String path) {
 
         try {
             StoredObject so = _store.getStoredObject(transaction, path);
@@ -62,32 +61,28 @@ public class DoGet extends DoHead {
                 return;
             }
             OutputStream out = resp.getOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(out, 64*1024);
             InputStream in = _store.getResourceContent(transaction, path);
+            BufferedInputStream bis = new BufferedInputStream(in, 64*1024);
             try {
                 if (in != null) {
                     LOG.debug("开始 {}, ", path);
-                    IOUtils.copyLarge(in, out);
+                    org.apache.commons.io.IOUtils.copyLarge(bis, bos);
                     LOG.debug("结束 {}", path);
                 }
             } finally {
                 // flushing causes a IOE if a file is opened on the webserver
                 // client disconnected before server finished sending response
+                org.apache.commons.io.IOUtils.closeQuietly(bis);
+                org.apache.commons.io.IOUtils.closeQuietly(in);
                 try {
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (Exception e) {
-                    LOG.warn("{} Closing InputStream causes Exception!\n", path
-                            ,e);
+                    bos.flush();
+                } catch (Exception ignored) {
                 }
-                try {
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    LOG.warn("{} Flushing OutputStream causes Exception!\n", path
-                            ,e);
-                }
+                org.apache.commons.io.IOUtils.closeQuietly(bos);
+                IOUtils.closeQuietly(out);
             }
+        } catch (EOFException ignore) {
         } catch (Exception e) {
             LOG.warn("{} doBody causes Exception!\n", path
                     ,e);

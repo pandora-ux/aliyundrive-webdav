@@ -9,6 +9,7 @@ import com.github.zxbu.webdavteambition.model.result.TFile;
 import com.github.zxbu.webdavteambition.model.result.TFileListResult;
 import com.github.zxbu.webdavteambition.model.result.UploadPreResult;
 import com.github.zxbu.webdavteambition.util.JsonUtil;
+import com.github.zxbu.webdavteambition.util.SpringBeanFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -59,9 +60,7 @@ public class AliYunDriverClientService {
                 @Override
                 public Set<TFile> load(String key) throws Exception {
                     // 获取真实的文件列表
-                    WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
-                    AliYunDriverClientService service = (AliYunDriverClientService)context.getBean("AliYunDriverClientService");
-                    return service.getTFiles2(key);
+                    return SpringBeanFactory.getBean(AliYunDriverClientService.class).getTFiles2(key);
                 }
             });
 
