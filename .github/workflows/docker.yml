@@ -63,4 +63,4 @@ jobs:
           java-version: '17'
           cache: 'gradle'
       - name: Run build with Gradle Wrapper
-        run: ./gradlew :bootBuildImage --publishImage=true
+        run: chmod +x ./gradlew;./gradlew :bootBuildImage --publishImage=true
