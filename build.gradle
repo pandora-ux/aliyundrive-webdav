@@ -41,6 +41,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+task ciPrintVersionInformation {
+	println version
+}
+
 bootBuildImage {
 	builder = 'maliksalman/paketobuildpacks-builder-tiny:focal-1.0.2'
 	environment = [
