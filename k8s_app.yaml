@@ -79,7 +79,7 @@ spec:
             - name: localtime
               mountPath: /etc/localtime
             - name: aliyun-driver
-              mountPath: /etc/aliyun-driver/
+              mountPath: /workspace/etc/aliyun-driver/
       volumes:
         - name: localtime
           hostPath:

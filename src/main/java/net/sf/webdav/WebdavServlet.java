@@ -16,12 +16,11 @@
 
 package net.sf.webdav;
 
+import net.sf.webdav.exceptions.WebdavException;
+
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.lang.reflect.Constructor;
-
-import javax.servlet.ServletException;
-
-import net.sf.webdav.exceptions.WebdavException;
 
 /**
  * Servlet which provides support for WebDAV level 2.

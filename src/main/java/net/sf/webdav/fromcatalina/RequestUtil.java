@@ -16,11 +16,10 @@
 
 package net.sf.webdav.fromcatalina;
 
+import jakarta.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
-
-import javax.servlet.http.Cookie;
 
 /**
  * General purpose request parsing and encoding utility methods.

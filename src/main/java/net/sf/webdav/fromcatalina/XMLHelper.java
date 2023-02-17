@@ -1,9 +1,9 @@
 package net.sf.webdav.fromcatalina;
 
-import java.util.Vector;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.util.Vector;
 
 public class XMLHelper {
 

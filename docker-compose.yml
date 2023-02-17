@@ -8,7 +8,7 @@ services:
     restart: always
     volumes:
       - /etc/localtime:/etc/localtime
-      - ./docker/etc/aliyun-driver/:/etc/aliyun-driver/
+      - ./docker/etc/aliyun-driver/:/workspace/etc/aliyun-driver/
     ports:
       - "8080:8080"
     tty: true

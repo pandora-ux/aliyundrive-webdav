@@ -1,17 +1,14 @@
 package com.github.zxbu.webdavteambition.config;
 
-import lombok.Data;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import com.github.zxbu.webdavteambition.util.JsonUtil;
-
+import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,16 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Data
-@ConfigurationProperties(prefix = "aliyundrive", ignoreUnknownFields = true)
+@ConfigurationProperties("aliyundrive")
 public class AliYunDriveProperties implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(AliYunDriveProperties.class);
     private static final String META_FILE_NAME = "meta.json";
-
     public String url = "https://api.aliyundrive.com/v2";
     public String authorization = "";
     public String refreshToken;
     public String refreshTokenNext;
-    public String workDir = "/etc/aliyun-driver/";
+    public String workDir = "/workspace/etc/aliyun-driver/";
     public String agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36";
     public String driveId;
     public String userId;
@@ -84,7 +80,7 @@ public class AliYunDriveProperties implements InitializingBean {
     }
 
     @Data
-    public class Session {
+    public static class Session {
         public String privateKey;
         public String publicKey;
         public String signature;

@@ -2,9 +2,7 @@ package com.github.zxbu.webdavteambition.manager;
 
 import com.github.zxbu.webdavteambition.client.AliYunDriverClient;
 import com.github.zxbu.webdavteambition.config.AliYunDriveProperties;
-
 import net.sf.webdav.exceptions.WebdavException;
-
 import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

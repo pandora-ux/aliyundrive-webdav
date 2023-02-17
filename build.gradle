@@ -1,83 +1,58 @@
 plugins {
-    id 'java'
-    id 'idea'
-    id 'org.springframework.boot' version '2.5.4'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-
-    // Spring Native Build
-    id 'org.springframework.experimental.aot' version '0.10.3'
-    id 'org.graalvm.buildtools.native' version '0.9.3'
+	id 'java'
+	id 'org.springframework.boot' version '3.0.2'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'org.graalvm.buildtools.native' version '0.9.20'
 }
 
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = file("build/classes/main/")
-        testOutputDir = file('build/classes/java/test')
-        downloadJavadoc = false
-        downloadSources = true
-    }
-}
-
-group = 'com.github.zxbu'
+group = 'com.github'
 version = '2.4.0'
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = '17'
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
-    maven {
-        url 'https://maven.aliyun.com/repository/public/'
-    }
-    maven {
-        url 'https://maven.aliyun.com/repository/spring/'
-    }
-    maven {
-        url 'https://repo.spring.io/release'
-    }
-    maven {
-        url 'https://jitpack.io'
-    }
-    mavenCentral()
+	mavenCentral()
+	maven { url 'https://repo.spring.io/release/'}
+	maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
-    compileOnly 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'com.google.code.gson:gson:2.8.8'
-    implementation 'com.google.guava:guava:31.1-jre'
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'org.apache.commons:commons-lang3:3.8'
-    implementation 'commons-io:commons-io:2.6'
-    implementation 'org.web3j:crypto:4.8.8'
-    compileOnly 'org.projectlombok:lombok:1.18.26'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.google.code.gson:gson:2.8.9'
+	implementation 'com.google.guava:guava:31.1-jre'
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+	implementation 'org.apache.commons:commons-lang3:3.8'
+	implementation 'commons-io:commons-io:2.11.0'// 2.11.0=java8 2.6=java7
+	implementation 'org.web3j:crypto:5.0.0'
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	implementation 'com.squareup.okhttp3:okhttp:3.14.9'
 }
 
-test {
-    useJUnitPlatform()
+tasks.named('test') {
+	useJUnitPlatform()
 }
-
-// Spring Native Build
 
 bootBuildImage {
-    builder = 'paketobuildpacks/builder:tiny'
-    environment = [
-            'BP_NATIVE_IMAGE': 'true'
-    ]
-}
+	builder = 'maliksalman/paketobuildpacks-builder-tiny:focal-1.0.2'
+	environment = [
+			'BP_NATIVE_IMAGE': 'true',
+			'BP_NATIVE_IMAGE_BUILD_ARGUMENTS' : '-H:+AddAllCharsets --enable-url-protocols=http,https'
+	]
+	tags = ["eritpchy/webdav-aliyundriver:latest", "eritpchy/webdav-aliyundriver:${version}-${new Date().format('yyyyMMdd')}"]
 
-nativeBuild {
-    classpath processAotResources.outputs, compileAotJava.outputs
-}
-
-nativeTest {
-    classpath processAotTestResources.outputs, compileAotTestJava.outputs
+	docker {
+		publishRegistry {
+			username = "$System.env.DOCKERHUB_USERNAME"
+			password = "$System.env.DOCKERHUB_TOKEN"
+		}
+	}
 }

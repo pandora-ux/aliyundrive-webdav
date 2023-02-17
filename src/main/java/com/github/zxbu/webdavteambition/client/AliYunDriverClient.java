@@ -3,20 +3,18 @@ package com.github.zxbu.webdavteambition.client;
 import com.github.zxbu.webdavteambition.config.AliYunDriveProperties;
 import com.github.zxbu.webdavteambition.manager.AliYunSessionManager;
 import com.github.zxbu.webdavteambition.util.JsonUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import net.sf.webdav.exceptions.WebdavException;
 import okhttp3.*;
-
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class AliYunDriverClient {
@@ -202,7 +200,7 @@ public class AliYunDriverClient {
                         listener.run();
                     }
                 }
-                LOGGER.error("请求失败，url={}, code={}, body={}", url, response.code(), res);
+                LOGGER.error("请求失败 post {}, body {}, code {} res {}", url, bodyAsJson, response.code(), res);
                 throw new WebdavException("请求失败：" + url).withResponseMessage(res);
             }
             res = toString(response.body());

@@ -16,24 +16,6 @@
 
 package net.sf.webdav.methods;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import net.sf.webdav.IMethodExecutor;
 import net.sf.webdav.ITransaction;
 import net.sf.webdav.StoredObject;
@@ -44,6 +26,18 @@ import net.sf.webdav.fromcatalina.URLEncoder;
 import net.sf.webdav.fromcatalina.XMLWriter;
 import net.sf.webdav.locking.IResourceLocks;
 import net.sf.webdav.locking.LockedObject;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public abstract class AbstractMethod implements IMethodExecutor {
 
@@ -290,12 +284,12 @@ public abstract class AbstractMethod implements IMethodExecutor {
     protected String getRelativePath(HttpServletRequest request) {
 
         // Are we being processed by a RequestDispatcher.include()?
-        if (request.getAttribute("javax.servlet.include.request_uri") != null) {
+        if (request.getAttribute("jakarta.servlet.include.request_uri") != null) {
             String result = (String) request
-                    .getAttribute("javax.servlet.include.path_info");
+                    .getAttribute("jakarta.servlet.include.path_info");
             // if (result == null)
             // result = (String) request
-            // .getAttribute("javax.servlet.include.servlet_path");
+            // .getAttribute("jakarta.servlet.include.servlet_path");
             if ((result == null) || (result.equals("")))
                 result = "/";
             return (result);

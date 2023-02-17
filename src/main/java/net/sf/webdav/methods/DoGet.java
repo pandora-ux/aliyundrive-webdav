@@ -15,24 +15,18 @@
  */
 package net.sf.webdav.methods;
 
-import java.io.*;
+import net.sf.webdav.*;
+import net.sf.webdav.locking.ResourceLocks;
+import org.apache.commons.io.IOUtils;
+import org.springframework.web.util.UriUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.webdav.IMimeTyper;
-import net.sf.webdav.ITransaction;
-import net.sf.webdav.IWebdavStore;
-import net.sf.webdav.StoredObject;
-import net.sf.webdav.WebdavStatus;
-import net.sf.webdav.locking.ResourceLocks;
-import org.apache.commons.io.IOUtils;
-import org.springframework.web.util.UriUtils;
 
 public class DoGet extends DoHead {
 
@@ -84,9 +78,11 @@ public class DoGet extends DoHead {
             }
         } catch (EOFException ignore) {
         } catch (Exception e) {
-            LOG.warn("{} doBody causes Exception!\n", path
-                    ,e);
-            LOG.trace(e.toString());
+            String message = e.getMessage();
+            if (!message.contains("Connection reset by peer")) {
+                LOG.warn("{} doBody causes Exception!\n", path,e);
+                LOG.trace(e.toString());
+            }
         }
     }
 

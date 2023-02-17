@@ -3,7 +3,7 @@ package com.github.zxbu.webdavteambition.util;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
- import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;
 
 /**
  * 普通类调用Spring注解方式的Service层bean

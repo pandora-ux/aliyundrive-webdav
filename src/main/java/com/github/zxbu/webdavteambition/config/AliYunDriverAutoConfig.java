@@ -21,7 +21,4 @@ public class AliYunDriverAutoConfig {
     public AliYunDriverClient teambitionClient(ApplicationContext applicationContext) throws Exception {
         return new AliYunDriverClient(aliYunDriveProperties);
     }
-
-
-
 }
