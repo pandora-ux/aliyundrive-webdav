@@ -48,11 +48,4 @@ bootBuildImage {
 			'BP_NATIVE_IMAGE_BUILD_ARGUMENTS' : '-H:+AddAllCharsets --enable-url-protocols=http,https'
 	]
 	tags = ["eritpchy/webdav-aliyundriver:latest", "eritpchy/webdav-aliyundriver:${version}-${new Date().format('yyyyMMdd')}"]
-
-	docker {
-		publishRegistry {
-			username = "$System.env.DOCKERHUB_USERNAME"
-			password = "$System.env.DOCKERHUB_TOKEN"
-		}
-	}
 }
