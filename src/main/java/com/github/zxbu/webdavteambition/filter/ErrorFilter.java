@@ -54,9 +54,12 @@ public class ErrorFilter extends OncePerRequestFilter {
             }
             httpServletResponse.flushBuffer();
         } catch (Throwable t) {
-            httpServletResponse.setStatus(500);
-            httpServletResponse.getWriter().write(t.getMessage());
-            httpServletResponse.flushBuffer();
+            try {
+                httpServletResponse.setStatus(500);
+                httpServletResponse.getWriter().write(t.getMessage());
+                httpServletResponse.flushBuffer();
+            } catch (IOException e) {
+            }
         }
     }
 
