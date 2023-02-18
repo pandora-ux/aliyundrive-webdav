@@ -46,10 +46,11 @@ task ciPrintVersionInformation {
 }
 
 bootBuildImage {
-	builder = 'maliksalman/paketobuildpacks-builder-tiny:focal-1.0.2'
+	builder = 'paketobuildpacks/builder:tiny'
 	environment = [
+			'BP_JVM_VERSION': "17",
 			'BP_NATIVE_IMAGE': 'true',
-			'BP_NATIVE_IMAGE_BUILD_ARGUMENTS' : '-H:+AddAllCharsets --enable-url-protocols=http,https'
+			'BP_NATIVE_IMAGE_BUILD_ARGUMENTS' : '-H:+AddAllCharsets --enable-url-protocols=http,https',
 	]
 	tags = ["eritpchy/webdav-aliyundriver:latest", "eritpchy/webdav-aliyundriver:${version}-${new Date().format('yyyyMMdd')}"]
 }
