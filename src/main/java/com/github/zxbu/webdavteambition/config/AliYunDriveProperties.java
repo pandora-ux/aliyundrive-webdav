@@ -32,7 +32,7 @@ public class AliYunDriveProperties implements InitializingBean {
     public String appId = "5dde4e1bdf9e4966b387ba58f4b3fdc3";
     public Session session = new Session();
 
-    public Auth auth = new Auth();
+    public transient Auth auth = new Auth();
 
     public void save() {
         String json = JsonUtil.toJsonPretty(this);
@@ -64,8 +64,10 @@ public class AliYunDriveProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         String refreshToken = this.refreshToken;
+        Auth auth = this.auth;
         AliYunDriveProperties other = load(workDir);
         BeanUtils.copyProperties(other, this);
+        this.auth = auth;
         this.authorization = null;
         if (StringUtils.isEmpty(this.deviceId)) {
             this.deviceId = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
