@@ -21,7 +21,7 @@ public class AliYunDriveProperties implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(AliYunDriveProperties.class);
     private static final String META_FILE_NAME = "meta.json";
     public String url = "https://api.aliyundrive.com/v2";
-    public String authorization = "";
+    public transient String authorization = "";
     public String refreshToken;
     public String refreshTokenNext;
     public String workDir = "/workspace/etc/aliyun-driver/";
@@ -35,7 +35,7 @@ public class AliYunDriveProperties implements InitializingBean {
     public Auth auth = new Auth();
 
     public void save() {
-        String json = JsonUtil.toJson(this);
+        String json = JsonUtil.toJsonPretty(this);
         File metaFile = new File(workDir, META_FILE_NAME);
         if (!metaFile.exists()) {
             metaFile.getParentFile().mkdirs();
@@ -66,6 +66,7 @@ public class AliYunDriveProperties implements InitializingBean {
         String refreshToken = this.refreshToken;
         AliYunDriveProperties other = load(workDir);
         BeanUtils.copyProperties(other, this);
+        this.authorization = null;
         if (StringUtils.isEmpty(this.deviceId)) {
             this.deviceId = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
         }
