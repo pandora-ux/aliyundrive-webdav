@@ -34,7 +34,6 @@ public class ErrorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         ErrorWrapperResponse wrapperResponse = new ErrorWrapperResponse(httpServletResponse);
-
         try {
             filterChain.doFilter(httpServletRequest, wrapperResponse);
             if (wrapperResponse.hasErrorToSend()) {
@@ -50,13 +49,13 @@ public class ErrorFilter extends OncePerRequestFilter {
                     message = WebdavStatus.getStatusText(status);
                 }
                 String errorXml = errorPage.replace("{{code}}", status + "").replace("{{message}}", message);
-                httpServletResponse.getWriter().write(errorXml);
+                httpServletResponse.getOutputStream().write(errorXml.getBytes(StandardCharsets.UTF_8));
             }
             httpServletResponse.flushBuffer();
         } catch (Throwable t) {
             try {
                 httpServletResponse.setStatus(500);
-                httpServletResponse.getWriter().write(t.getMessage());
+                httpServletResponse.getOutputStream().write(t.getMessage().getBytes(StandardCharsets.UTF_8));
                 httpServletResponse.flushBuffer();
             } catch (IOException e) {
             }
