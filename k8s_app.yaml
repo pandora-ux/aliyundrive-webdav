@@ -79,11 +79,11 @@ spec:
             - name: localtime
               mountPath: /etc/localtime
             - name: aliyun-driver
-              mountPath: /workspace/etc/aliyun-driver/
+              mountPath: /conf
       volumes:
         - name: localtime
           hostPath:
             path: /etc/localtime
         - name: aliyun-driver
           hostPath:
-            path: /etc/aliyun-driver/
+            path: ./docker/conf

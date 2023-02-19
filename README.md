@@ -37,11 +37,19 @@ java -jar webdav.jar --aliyundrive.refresh-token="your refreshToken"
 ```
 ## 容器运行
 ```bash
-docker run -d --name=webdav-aliyundriver --restart=always -p 8080:8080  -v /etc/localtime:/etc/localtime -v /etc/aliyun-driver/:/workspace/etc/aliyun-driver/ -e TZ="Asia/Shanghai" -e ALIYUNDRIVE_REFRESH_TOKEN="your refreshToken" -e ALIYUNDRIVE_AUTH_PASSWORD="admin" -e JAVA_OPTS="-Xmx1g" eritpchy/webdav-aliyundriver
+mkdir $(pwd)/conf
+docker run -d \
+  --name=webdav-aliyundriver \
+  --restart=always -p 8080:8080  \
+  -v /etc/localtime:/etc/localtime \
+  -v $(pwd)/conf:/conf \
+  -e TZ="Asia/Shanghai" \
+  -e ALIYUNDRIVE_REFRESH_TOKEN="your refreshToken" \
+  -e ALIYUNDRIVE_AUTH_PASSWORD="admin" \
+  eritpchy/webdav-aliyundriver
 
-# /workspace/etc/aliyun-driver/ 挂载卷自动维护了最新的refreshToken，建议挂载
+# /conf 挂载卷自动维护了最新的refreshToken，建议挂载
 # ALIYUNDRIVE_AUTH_PASSWORD 是admin账户的密码，建议修改
-# JAVA_OPTS 可修改最大内存占用，比如 -e JAVA_OPTS="-Xmx512m" 表示最大内存限制为512m
 ```
 
 ## Docker-Compose
@@ -56,16 +64,15 @@ services:
       - ALIYUNDRIVE_REFRESH_TOKEN=refreshToken
       - ALIYUNDRIVE_AUTH_USER_NAME=admin
       - ALIYUNDRIVE_AUTH_PASSWORD=admin
-      - JAVA_OPTS=-Xmx1g
     volumes:
-      - /etc/aliyun-driver/:/workspace/etc/aliyun-driver/
+      - ./docker/conf:/conf
     ports:
       - 6666:8080
     restart: always
 
 # “refreshToken”请根据下文说明自行获取。
 # “ALIYUNDRIVE_AUTH_USER-NAME”和“ALIYUNDRIVE_AUTH_PASSWORD”为连接用户名和密码，建议更改。
-# “/etc/aliyun-driver/:/workspace/etc/aliyun-driver/”，可以把冒号前改为指定目录，比如“/homes/USER/docker/alidriver/:/workspace/etc/aliyun-driver/”。
+# “./docker/conf/:/conf”，可以把冒号前改为指定目录，比如“/homes/USER/docker/alidriver/:/conf”。
 # 删除了“/etc/localtime:/etc/localtime”，如有需要同步时间请自行添加在environment下。
 # 端口6666可自行按需更改，此端口为WebDAV连接端口,8080为容器内配置端口，修改请量力而为。
 # 建议不要保留这些中文注释，以防报错，比如QNAP。
@@ -92,7 +99,7 @@ sudo kubectl apply -f k8s_app.yaml
     WebDav账户，默认admin
 --aliyundrive.auth.password=admin
     WebDav密码，默认admin
---aliyundrive.work-dir=/workspace/etc/aliyun-driver/
+--aliyundrive.work-dir=./conf
     token挂载路径（如果多开的话，需修改此配置）
     
 ```
