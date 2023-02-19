@@ -1,0 +1,7 @@
+/.github
+/.gradle
+/.idea
+/Dockerfile
+/webdav.log
+/webdav.log*
+/build

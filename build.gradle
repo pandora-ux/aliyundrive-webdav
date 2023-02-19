@@ -41,8 +41,24 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
 task ciPrintVersionInformation {
 	println version
+}
+
+// https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
+graalvmNative {
+	binaries {
+		main {
+			buildArgs.add('-H:+AddAllCharsets')
+			buildArgs.add('--allow-incomplete-classpath')
+			buildArgs.add('--enable-url-protocols=http,https')
+		}
+	}
 }
 
 bootBuildImage {
