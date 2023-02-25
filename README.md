@@ -29,6 +29,29 @@
 
 # 如何使用
 支持refreshToken登录方式，具体看参数说明
+
+
+## 直接运行(Windows/Linux/macOS/Android)
+
+[点击下载](https://file.xdow.net/aliyundriver)
+
+- Windows
+```powershell
+webdav-aliyundriver-windows-amd64.exe --aliyundrive.refresh-token="your refreshToken"
+```
+- Linux(X64)
+```bash
+./webdav-aliyundriver-linux-amd64 --aliyundrive.refresh-token="your refreshToken"
+```
+- Linux(ARM64)
+```bash
+./webdav-aliyundriver-linux-arm64 --aliyundrive.refresh-token="your refreshToken"
+```
+- macOS(Intel)
+```bash
+./webdav-aliyundriver-darwin-x86_64 --aliyundrive.refresh-token="your refreshToken"
+```
+
 ## Jar包运行
 [点击下载Jar包](https://github.com/zxbu/webdav-aliyundriver/releases/latest)
 > 建议自己下载源码编译，以获得最新代码
