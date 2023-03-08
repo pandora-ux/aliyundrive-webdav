@@ -66,10 +66,6 @@ spec:
               value: "Asia/Shanghai"
             - name: ALIYUNDRIVE_REFRESH_TOKEN
               value: "xxx"
-            - name: ALIYUNDRIVE_AUTH_USER_NAME
-              value: "admin"
-            - name: ALIYUNDRIVE_AUTH_PASSWORD
-              value: "admin"
             - name: JAVA_OPTS
               value: "-Xmx1g"
           ports:
